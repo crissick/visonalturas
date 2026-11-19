@@ -2,7 +2,7 @@
  SERVICIOS_VISION_DATABASE  Backend pagina Visi0n de Alturas
 ==========================================================================
 */
-require('dotenv').config();
+const env = require('dotenv').config();
 const express = require('express');
 const app = express();
 const port = process.env.PORT;
@@ -23,8 +23,8 @@ app.set('llave', process.env.LLAVE_TOKEN);
  CONEXION A MONGODB
 ==========================================================================
 */
-const mongo_url = process.env.MONGO_URL;
-require('./db')(mongo_url);
+const connectionstring = process.env.MONGO_URL;
+const conectarDB = require('./db');
 
 /*
  REGLAS DEL PRODUCTO
@@ -2262,6 +2262,12 @@ app.use((err, req, res, next) =>{
  SERVIDOR
 ==========================================================================
 */
-const server = app.listen(port, () =>{
-    console.log("Servidor escuchando por " + port);
-});
+const iniciarServidor = async () =>{
+    console.log("Cargando...");
+    await conectarDB(connectionstring);
+    const server = app.listen(port, () =>{
+        console.log("Servidor escuchando por " + port);
+    });
+}
+
+iniciarServidor();
