@@ -42,7 +42,7 @@ const dispositivos_tabla = new mongoose.Schema({
         },
         rele_2: {
             type: Boolean,
-            default: false
+            default: true
         },
         segundos: {
             type: Number,

@@ -180,7 +180,7 @@ function vistaDispositivo(dispositivo, producto, permiso) {
 function vistaReaccion(dispositivo) {
     let reaccion = {
         rele_1 : true,
-        rele_2 : false,
+        rele_2 : true,
         segundos : 30
     }
     if(dispositivo.reaccion){
