@@ -85,6 +85,7 @@ const {
     marcarConexion,
     vistaDispositivo,
     vistaReaccion,
+    rutaVideo,
     vistaContactos,
     buscarProducto,
     permisoSobre,
@@ -1012,6 +1013,39 @@ app.put('/dispositivo/:serial/reaccion', rutasProtegidas, async (req, res) =>{
 
     }else{
         payload.mensaje = "rele_1 y rele_2 van en true o false; segundos de 1 a " + SEGUNDOS_RELE_MAX;
+        res.send(payload);
+    }
+});
+
+
+/*
+ DENTRO DE UN DISPOSITIVO: VIDEO EN VIVO
+==========================================================================
+*/
+app.get('/dispositivo/:serial/video', rutasProtegidas, async (req, res) =>{
+    let serial = texto(req.params.serial).toUpperCase();
+    console.log("Solicitó el video en vivo");
+
+    let query = { "serial" : serial };
+    let payload = {
+        mensaje : ""
+    }
+
+    try{
+        const dispositivodb = await DispositivoModel.findOne(query);
+        const permiso = await permisoSobre(dispositivodb, req.decoded);
+
+        if(permiso == null){
+            payload.mensaje = "dispositivo no encontrado";
+        }else{
+            payload.mensaje = "ok";
+            payload.url = "/camara/" + rutaVideo(serial, app.get('llave')) + "/";
+        }
+        res.send(payload);
+
+    }catch(err){
+        console.log("error al buscar el video");
+        payload.mensaje = "error al buscar el video";
         res.send(payload);
     }
 });

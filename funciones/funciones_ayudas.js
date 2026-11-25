@@ -63,6 +63,11 @@ function huellaCodigo(codigo, llave) {
     return crypto.createHmac("sha256", llave).update(texto(codigo).toUpperCase()).digest("hex");
 }
 
+function rutaVideo(serial, llave) {
+    let huella = crypto.createHmac("sha256", llave).update("video-" + texto(serial).toUpperCase()).digest("hex");
+    return texto(serial).toLowerCase() + "-" + huella.substring(0, 16);
+}
+
 async function crearCodigoUnico(llave) {
     let codigo = crearCodigo();
     let query = { "huella_codigo" : huellaCodigo(codigo, llave) };
@@ -302,6 +307,7 @@ module.exports = {
     marcarConexion,
     vistaDispositivo,
     vistaReaccion,
+    rutaVideo,
     vistaContactos,
     buscarProducto,
     permisoSobre,

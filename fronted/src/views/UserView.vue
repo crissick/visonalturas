@@ -142,6 +142,12 @@
         <option v-for="disp in dispositivos" :key="disp.serial" :value="disp.serial">{{ disp.nombre }} ({{ disp.serial }})</option>
       </select>
 
+      <div class="pantalla" v-if="video_vivo != ''">
+        <iframe class="video_vivo" :src="video_vivo" allow="autoplay; fullscreen" title="video en vivo"></iframe>
+      </div>
+      <p class="nota_vivo" v-if="video_vivo != ''">video en vivo (unos segundos de retraso)</p>
+
+      <h3 v-if="serial_vivo != ''">ÚLTIMA FOTO DE ALERTA</h3>
       <div class="pantalla">
         <img class="imagen_vivo" v-if="foto_vivo != ''" :src="foto_vivo" alt="última foto del dispositivo">
         <p v-else>{{ aviso_vivo }}</p>
@@ -174,6 +180,7 @@
         ubicacion : "",
         alertas : [],
         serial_vivo : "",
+        video_vivo : "",
         foto_vivo : "",
         id_foto_vivo : "",
         hora_foto : "",
@@ -505,12 +512,35 @@
         this.serial_vivo = serial
         this.quitarFoto()
         this.cambiarPestana("vivo")
+        this.traerVideo()
       },
 
       cambiarCamara(){
         marcarActividad()
         this.quitarFoto()
         this.traerUltimaFoto()
+        this.traerVideo()
+      },
+
+      async traerVideo(){
+        this.video_vivo = ""
+        if(this.serial_vivo == ""){
+          return
+        }
+        try{
+          const respuesta = await axios.get(SERVIDOR + "/dispositivo/" + this.serial_vivo + "/video", this.conToken())
+          if(this.revisarRespuesta(respuesta)){
+            if(respuesta.data.mensaje == "ok"){
+              this.video_vivo = SERVIDOR + respuesta.data.url
+            }else{
+              this.aviso_vivo = respuesta.data.mensaje
+            }
+          }
+
+        }catch(error){
+          const mensaje = "sin conexion con el servidor"
+          this.aviso_vivo = mensaje
+        }
       },
 
       actualizarCamara(){
@@ -793,6 +823,15 @@
     display: block;
     width: 100%;
     border-radius: 4px;
+  }
+
+  .video_vivo{
+    display: block;
+    width: 100%;
+    aspect-ratio: 3 / 2;
+    border: none;
+    border-radius: 4px;
+    background: #111111;
   }
 
   .nota_vivo{
