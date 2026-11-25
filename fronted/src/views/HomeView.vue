@@ -5,13 +5,7 @@
       <button class="boton_registro" @click="mostrarRegistro">REGISTRO</button>
     </div>
 
-    <div class="dos_columnas">
-      <div class="columna">
-        <img src="../assets/logo_vision.svg" width="220">
-        <h1 class="titulo">VISIÓN DE ALTURAS</h1>
-      </div>
-
-      <div class="columna">
+    <div class="columna">
         <div v-if="pestana == 'login'">
           <h2>LOGIN</h2>
           <input class="casilla" type="email" v-model="correo" placeholder="CORREO">
@@ -32,10 +26,14 @@
           <button class="boton_entrar" @click="registrar">REGISTRARME</button>
           <p>{{ mensaje }}</p>
         </div>
-      </div>
     </div>
 
-    <h1>COMPROMETIDO CON LA SEGURIDAD</h1>
+    <div class="columna">
+      <img class="logo" src="../assets/logo_vision.svg" width="220">
+      <h1 class="titulo">VISIÓN DE ALTURAS</h1>
+    </div>
+
+    <h1 class="lema">COMPROMETIDO CON LA SEGURIDAD</h1>
   </div>
 </template>
 
@@ -129,34 +127,42 @@
 <style scoped>
   .barra_superior{
     display: flex;
-    justify-content: flex-end;
-    padding: 0 30px;
-  }
-
-  .dos_columnas{
-    display: flex;
     justify-content: center;
-    gap: 60px;
+    gap: 10px;
+    margin: 10px 0 20px;
   }
 
   .columna{
-    flex: 1;
     max-width: 450px;
+    margin: 0 auto 20px;
+    padding: 0 16px;
+  }
+
+  .logo{
+    display: block;
+    max-width: 60%;
+    height: auto;
+    margin: 10px auto 0;
   }
 
   .titulo{
     font-family: "Orbitron", Arial, sans-serif;
     font-weight: 700;
-    font-size: 32px;
+    font-size: clamp(20px, 6vw, 32px);
     letter-spacing: 3px;
     white-space: nowrap;
     color: #111111;
   }
 
+  .lema{
+    padding: 0 16px;
+    font-size: clamp(20px, 5vw, 32px);
+  }
+
   .casilla{
     display: block;
     box-sizing: border-box;
-    width: 80%;
+    width: 100%;
     margin-bottom: 10px;
     padding: 10px;
     color: #111111;
@@ -186,7 +192,6 @@
   }
 
   .boton_registro{
-    margin-left: 10px;
     width: 140px;
     background: #1e5f6f;
   }

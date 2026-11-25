@@ -139,11 +139,8 @@
 }
 
 .presentacion_hora {
-  position: fixed;
-  top: 6px;
-  left: 6px;
-  z-index: 10;
-  margin: 0;
+  display: table;
+  margin: 10px auto 4px;
   padding: 3px 8px;
   font-family: Consolas, "Courier New", monospace;
   font-size: 25px;
