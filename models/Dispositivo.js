@@ -35,6 +35,20 @@ const dispositivos_tabla = new mongoose.Schema({
         type: String,
         default: null
     },
+    reaccion: {
+        rele_1: {
+            type: Boolean,
+            default: true
+        },
+        rele_2: {
+            type: Boolean,
+            default: false
+        },
+        segundos: {
+            type: Number,
+            default: 30
+        }
+    },
     nombre: {
         type: String
     },

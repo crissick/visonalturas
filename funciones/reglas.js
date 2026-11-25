@@ -29,8 +29,11 @@ const MAX_CONTACTOS = 5;
 const MAX_ORDENES = 20;
 const MINUTOS_SIN_CONEXION = 10;
 
+// SALIDAS DE POTENCIA
+const SEGUNDOS_RELE_MAX = 120;
+
 // LISTAS PERMITIDAS
-const ACCIONES = ["encender_sirena", "apagar_sirena", "encender_luz", "apagar_luz", "apagar_alarma"];
+const ACCIONES = ["encender_rele_1", "apagar_rele_1", "encender_rele_2", "apagar_rele_2", "apagar_alarma"];
 const VERSIONES = ["bodega", "rascacielos", "centro comercial"];
 
 // CARPETA DE FOTOS
@@ -57,6 +60,7 @@ module.exports = {
     MAX_CONTACTOS,
     MAX_ORDENES,
     MINUTOS_SIN_CONEXION,
+    SEGUNDOS_RELE_MAX,
     ACCIONES,
     VERSIONES,
     CARPETA_FOTOS

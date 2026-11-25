@@ -41,6 +41,7 @@
             <th>Conexión</th>
             <th>Batería</th>
             <th>Permiso</th>
+            <th>Al detectar</th>
             <th>Acciones</th>
           </tr>
         </thead>
@@ -79,6 +80,15 @@
               {{ textoBateria(disp.bateria) }}
             </td>
             <td>{{ textoPermiso(disp.permiso) }}</td>
+            <td>
+              <div class="celda_reaccion" v-if="disp.permiso == 'dueno'">
+                <label><input type="checkbox" v-model="disp.reaccion.rele_1"> RELÉ 1</label>
+                <label><input type="checkbox" v-model="disp.reaccion.rele_2"> RELÉ 2</label>
+                <input class="casilla_segundos" type="number" min="1" max="120" v-model.number="disp.reaccion.segundos"> s
+                <button class="boton_lapiz" title="guardar" @click="guardarReaccion(disp)">✔</button>
+              </div>
+              <span v-else>{{ textoReaccion(disp.reaccion) }}</span>
+            </td>
             <td>
               <button class="boton_fila" v-if="disp.permiso != 'ver'" @click="apagarAlarma(disp.serial)">APAGAR</button>
               <button class="boton_fila" @click="verEnVivo(disp.serial)">VER</button>
@@ -377,6 +387,42 @@
         }
       },
 
+      async guardarReaccion(disp){
+        marcarActividad()
+        let datos = {
+          rele_1 : disp.reaccion.rele_1,
+          rele_2 : disp.reaccion.rele_2,
+          segundos : disp.reaccion.segundos
+        }
+        try{
+          const respuesta = await axios.put(SERVIDOR + "/dispositivo/" + disp.serial + "/reaccion", datos, this.conToken())
+          if(this.revisarRespuesta(respuesta)){
+            this.mensaje = respuesta.data.mensaje + " en " + disp.serial
+          }
+
+        }catch(error){
+          const mensaje = "sin conexion con el servidor"
+          this.mensaje = mensaje
+        }
+      },
+
+      textoReaccion(reaccion){
+        if(reaccion == null){
+          return ""
+        }
+        let reles = []
+        if(reaccion.rele_1){
+          reles.push("relé 1")
+        }
+        if(reaccion.rele_2){
+          reles.push("relé 2")
+        }
+        if(reles.length == 0){
+          return "ningún relé"
+        }
+        return reles.join(" + ") + " por " + reaccion.segundos + " s"
+      },
+
       async apagarAlarma(serial){
         marcarActividad()
         try{
@@ -632,6 +678,22 @@
   .boton_lapiz:hover{
     color: #0f3640;
     background: #e8f1f3;
+    border-radius: 4px;
+  }
+
+  .celda_reaccion{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  .casilla_segundos{
+    width: 56px;
+    padding: 4px 6px;
+    color: #111111;
+    border: 2px solid #1e5f6f;
     border-radius: 4px;
   }
 

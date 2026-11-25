@@ -167,8 +167,23 @@ function vistaDispositivo(dispositivo, producto, permiso) {
         ultima_conexion : dispositivo.ultima_conexion,
         fecha_vinculacion : dispositivo.fecha_vinculacion,
         tiene_clave_desarme : dispositivo.clave_desarme != null,
+        reaccion : vistaReaccion(dispositivo),
         permiso : permiso
     }
+}
+
+function vistaReaccion(dispositivo) {
+    let reaccion = {
+        rele_1 : true,
+        rele_2 : false,
+        segundos : 30
+    }
+    if(dispositivo.reaccion){
+        reaccion.rele_1 = dispositivo.reaccion.rele_1;
+        reaccion.rele_2 = dispositivo.reaccion.rele_2;
+        reaccion.segundos = dispositivo.reaccion.segundos;
+    }
+    return reaccion;
 }
 
 function vistaContactos(dispositivo) {
@@ -286,6 +301,7 @@ module.exports = {
     desdeVinculacion,
     marcarConexion,
     vistaDispositivo,
+    vistaReaccion,
     vistaContactos,
     buscarProducto,
     permisoSobre,

@@ -43,6 +43,7 @@ const {
     MAX_CONTACTOS,
     MAX_ORDENES,
     MINUTOS_SIN_CONEXION,
+    SEGUNDOS_RELE_MAX,
     ACCIONES,
     VERSIONES,
     CARPETA_FOTOS
@@ -83,6 +84,7 @@ const {
     desdeVinculacion,
     marcarConexion,
     vistaDispositivo,
+    vistaReaccion,
     vistaContactos,
     buscarProducto,
     permisoSobre,
@@ -961,6 +963,61 @@ app.put('/dispositivo/:serial/clave-desarme', rutasProtegidas, async (req, res) 
 
 
 /*
+ DENTRO DE UN DISPOSITIVO: REACCIÓN AL DETECTAR
+==========================================================================
+*/
+app.put('/dispositivo/:serial/reaccion', rutasProtegidas, async (req, res) =>{
+    let reaccion = req.body;
+    let serial = req.params.serial;
+    console.log("Solicitó cambiar la reacción del equipo");
+
+    let payload = {
+        mensaje : ""
+    }
+
+    let segundos = NaN;
+    if(reaccion){
+        segundos = Number(texto(reaccion.segundos));
+    }
+
+    if(reaccion && typeof reaccion.rele_1 == "boolean" && typeof reaccion.rele_2 == "boolean" && Number.isInteger(segundos) && segundos >= 1 && segundos <= SEGUNDOS_RELE_MAX){
+        let query = { "serial" : serial };
+
+        try{
+            const dispositivodb = await DispositivoModel.findOne(query);
+            const permiso = await permisoSobre(dispositivodb, req.decoded);
+
+            if(permiso == null){
+                payload.mensaje = "dispositivo no encontrado";
+            }else if(permiso != PERMISO_DUENO){
+                payload.mensaje = "solo el dueño puede hacer esto";
+            }else{
+                dispositivodb.reaccion = {
+                    rele_1 : reaccion.rele_1,
+                    rele_2 : reaccion.rele_2,
+                    segundos : segundos
+                }
+                await dispositivodb.save();
+
+                payload.mensaje = "reacción guardada";
+                payload.reaccion = vistaReaccion(dispositivodb);
+            }
+            res.send(payload);
+
+        }catch(err){
+            console.log("error al cambiar la reacción");
+            payload.mensaje = "error al cambiar la reacción";
+            res.send(payload);
+        }
+
+    }else{
+        payload.mensaje = "rele_1 y rele_2 van en true o false; segundos de 1 a " + SEGUNDOS_RELE_MAX;
+        res.send(payload);
+    }
+});
+
+
+/*
  DETECCIONES: POR DISPOSITIVO
 ==========================================================================
 */
@@ -1441,6 +1498,7 @@ app.get('/equipo/ordenes', rutasEquipo, async (req, res) =>{
                 .map(o =>({ id_orden : o.id_orden, accion : o.accion }));
             payload.contactos_de_llamada = dispositivodb.contactos_de_llamada.map(c =>({ nombre : c.nombre, telefono : c.telefono }));
             payload.clave_desarme = dispositivodb.clave_desarme;
+            payload.reaccion = vistaReaccion(dispositivodb);
         }else{
             payload.mensaje = "dispositivo no encontrado";
         }
